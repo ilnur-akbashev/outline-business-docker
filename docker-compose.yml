@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  outline:
+    image: outlinewiki/outline:latest
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - SECRET_KEY=${SECRET_KEY}
+      - UTILS_SECRET=${UTILS_SECRET}
+      - URL=${URL}
+      - FILE_STORAGE=local
+    volumes:
+      - ./storage:/var/lib/outline/data
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER=outline
+      POSTGRES_PASSWORD=outlinepass
+      POSTGRES_DB=outlinedb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    volumes:
+      - redisdata:/data
+
+volumes:
+  pgdata:
+  redisdata:
